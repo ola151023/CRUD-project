@@ -20,7 +20,7 @@ class TaskController extends Controller
         return response()->json([
             'status' => 'success',
             'tasks' => $tasks,
-        ], 200); 
+        ], 200);
     }
 
     /**
@@ -28,7 +28,7 @@ class TaskController extends Controller
      */
     public function create(TaskRequest $request)
     {
-        
+
 
 
     }
@@ -37,19 +37,21 @@ class TaskController extends Controller
      * Store a newly created resource in storage.
      */
     public function store(TaskRequest $request):JsonResponse{
+        $validatedData = $request->validated();
         DB::beginTransaction();
         try {
             // Create a new task record
-           
+
         $task = Task::query()->create([
             'title' => $request->get('title'),
             'description' => $request->get('description'),
             'priority'=> $request->get('priority'),
             'due_date'=> $request->get('due_date'),
-            'status'=>$request->get('status')
+            'status'=>$request->get('status'),
+            'project_id'=> $request->get('project_id'),
+            'created_by'=> auth()->id(),
 
 
-  
         ]);
         DB::commit();
         return response()->json([
@@ -63,12 +65,12 @@ class TaskController extends Controller
             DB::rollBack();
             return response()->json([
                 'message' => $th->getMessage()
-              
+
             ], 500);
         }
-        
-                       
-       
+
+
+
     }
 
     /**
@@ -76,7 +78,7 @@ class TaskController extends Controller
      */
     public function show( $id)
     {
-      
+
             try {
                 $task = Task::findOrFail($id);
                 return response()->json($task);
@@ -84,7 +86,7 @@ class TaskController extends Controller
                 return response()->json(['error' => 'task not found'], 404);
             }
         }
-    
+
 
     /**
      * Show the form for editing the specified resource.
@@ -97,7 +99,7 @@ class TaskController extends Controller
     /**
      * Update the specified resource in storage.
      */
-   
+
     public function update(TaskRequest $request, $id)
     {
         $task = Task::findOrFail($id);
@@ -116,6 +118,6 @@ class TaskController extends Controller
 
         return response()->json(['message' => 'task deleted successfully']);
     }
-   
-   
+
+
 }

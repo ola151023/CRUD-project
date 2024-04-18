@@ -17,13 +17,19 @@ return new class extends Migration
             $table->text('description')->nullable();
             $table->dateTime('due_date');
             $table->integer('priority')->default(0);
-            $table->string('status')->default('incomplete');
-     
+            $table->enum('status', ['pending', 'completed'])->default('pending');
+            $table->unsignedBigInteger('project_id');
+            $table->unsignedBigInteger('created_by');
             $table->timestamps();
 
+            // Define foreign key constraints
+            $table->foreign('project_id')->references('id')->on('projects');
+            $table->foreign('created_by')->references('id')->on('users');
 
-     
-      
+
+
+
+
         });
     }
 
